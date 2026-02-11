@@ -1,13 +1,131 @@
-```markdown
-# 🚀 Info Circle – Frontend
 
-A modern, responsive, and role-based web application built using **React 18 + Vite 5 + Tailwind CSS 3.4**.
+## 📌 Initial Setup (After Cloning)
 
-This project is designed with a scalable architecture, premium UI, and mobile-first responsiveness.
+```bash
+git clone <repository-url>
+cd <project-folder>
+npm install
+npm run dev
+```
 
 ---
 
-## 📌 Tech Stack
+# 🌿 Branching Strategy
+
+⚠️ Do NOT work directly on `main` branch.
+
+Always create a new branch for your feature.
+
+---
+
+## 🟢 Step 1: Create a New Branch
+
+Make sure you're on main first:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+Now create a new branch:
+
+```bash
+git checkout -b new-branch-name
+```
+
+Example:
+
+* feature-auth
+* feature-posts
+* bugfix-navbar
+
+---
+
+## 🟢 Step 2: Work and Commit
+
+After making changes:
+
+```bash
+git add .
+git commit -m "Your commit message"
+```
+
+---
+
+## 🟢 Step 3: Push New Branch to GitHub
+
+First time pushing:
+
+```bash
+git push -u origin new-branch-name
+```
+
+After that, just use:
+
+```bash
+git push
+```
+
+---
+
+# 🔄 Keeping Your Branch Updated
+
+Before continuing work (every day):
+
+```bash
+git checkout main
+git pull origin main
+git checkout new-branch-name
+git merge main
+```
+
+This ensures your branch has the latest updates.
+
+---
+
+# ✅ After Completing Your Work
+
+1. Push your branch:
+
+```bash
+git push
+```
+
+2. Go to GitHub
+3. Create a Pull Request
+4. Merge into `main` after review
+
+---
+
+# 🧹 Optional: Delete Branch After Merge
+
+```bash
+git branch -d new-branch-name
+git push origin --delete new-branch-name
+```
+
+---
+
+# 🚨 Important Rules
+
+* ❌ Never push directly to `main`
+* ❌ Never delete `main`
+* ❌ Never force push
+* ✅ Always pull before starting work
+* ✅ Always use feature branches
+* ✅ Use clear commit messages
+
+---
+
+# 🚀 Info Circle – Frontend
+
+A modern, responsive, role-based web application built using **React 18 + Vite 5 + Tailwind CSS 3.4**.
+
+Designed with scalable architecture, premium UI principles, and a mobile-first approach.
+
+---
+
+## 🛠 Tech Stack
 
 - ⚛️ React 18.2
 - ⚡ Vite 5
@@ -18,17 +136,10 @@ This project is designed with a scalable architecture, premium UI, and mobile-fi
 
 ---
 
-You’re right 😄 — that version is clean, but it’s not **premium-looking**.
+## 📂 Project Architecture
 
-Let’s upgrade it to something that looks modern, structured, and impressive on GitHub.
+```
 
-Below is a **better designed, visually structured README section** you can copy.
-
----
-
-# 📂 Project Architecture
-
-```text
 src
 ├── assets/            → Static files (images, icons, logos)
 │
@@ -49,45 +160,46 @@ src
 │
 ├── App.jsx            → Root component
 └── main.jsx           → Entry point
-```
+
+````
 
 ---
 
-# ✨ Core Features
+## ✨ Core Features
 
-## 👤 User Module
+### 👤 User Module
 
-✔ Landing Page (Modern hero section)
-✔ Secure Login & Registration
-✔ JWT-Based Role Authentication
-✔ Create, Edit & Delete Posts
-✔ Personal Profile Management
-✔ Fully Responsive (Mobile-First Design)
-
----
-
-## 🛠 Admin Module
-
-✔ Dedicated Admin Dashboard
-✔ Manage Users
-✔ Manage Posts
-✔ Category Management
-✔ Add / Remove Admin
+- Modern Landing Page
+- Secure Login & Registration
+- JWT-Based Role Authentication
+- Create, Edit & Delete Posts
+- Personal Profile Management
+- Fully Responsive (Mobile-First Design)
 
 ---
 
-# ⚙️ Installation Guide
+### 🛠 Admin Module
 
-## 1️⃣ Clone Repository
+- Dedicated Admin Dashboard
+- Manage Users
+- Manage Posts
+- Category Management
+- Add / Remove Admin
+
+---
+
+## ⚙️ Installation Guide
+
+### 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/your-username/info-circle.git
 cd info-circle
-```
+````
 
 ---
 
-## 2️⃣ Install Dependencies
+### 2️⃣ Install Dependencies
 
 ```bash
 npm install
@@ -95,13 +207,13 @@ npm install
 
 ---
 
-## 3️⃣ Start Development Server
+### 3️⃣ Start Development Server
 
 ```bash
 npm run dev
 ```
 
-🌍 Open in browser:
+Open in browser:
 
 ```
 http://localhost:5173
@@ -109,104 +221,42 @@ http://localhost:5173
 
 ---
 
-# 🌐 Environment Configuration
+## 🔐 Environment Variables
 
-Create `.env` file in root directory:
+Create a `.env` file in the root directory:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
-⚠ Vite requires all environment variables to start with `VITE_`
-
----
-
-# 🚀 Production Build
-
-```bash
-npm run build
-npm run preview
-```
-
----
-
-# 📱 Responsive Design Strategy
-
-This project follows:
-
-* Mobile-first approach
-* Tailwind breakpoints (`sm`, `md`, `lg`, `xl`)
-* Flexible grid & layout system
-* Adaptive UI for future mobile conversion
-
----
-
-# 🎯 Why This Looks Better
-
-✔ Uses arrows (→) for explanation
-✔ Better spacing
-✔ Cleaner visual hierarchy
-✔ More professional language
-✔ Clear module separation
-✔ Developer-friendly formatting
-
----
-
-If you want it to look **even more premium**, I can:
-
-* Add badges (React, Vite, Tailwind icons)
-* Add a clean project banner header
-* Add a feature comparison table
-* Add deployment instructions (Vercel/Netlify)
-* Make it recruiter-ready for LinkedIn
-
-Tell me how premium you want it 😎
-
-
----
-
-## 🔐 Environment Variables
-
-Create a `.env` file in root directory:
-
-```
-
-VITE_API_BASE_URL=[http://localhost:8080/api](http://localhost:8080/api)
-
-```
-
-> Note: In Vite, environment variables must start with `VITE_`
+> ⚠️ In Vite, environment variables must start with `VITE_`
 
 ---
 
 ## 🧪 Production Build
 
-To create optimized production build:
+Create optimized production build:
 
-```
-
+```bash
 npm run build
-
 ```
 
-To preview build:
+Preview production build:
 
-```
-
+```bash
 npm run preview
-
 ```
 
 ---
 
-## 📱 Responsive Design
+## 📱 Responsive Design Strategy
 
-This application follows a **mobile-first approach** using Tailwind breakpoints:
+This project follows:
 
-- sm
-- md
-- lg
-- xl
+* Mobile-first approach
+* Tailwind breakpoints (`sm`, `md`, `lg`, `xl`)
+* Flexible grid-based layout
+* Future-ready for mobile conversion
 
 ---
 
@@ -214,84 +264,38 @@ This application follows a **mobile-first approach** using Tailwind breakpoints:
 
 Dependencies are managed using:
 
-- `package.json`
-- `package-lock.json`
+* `package.json`
+* `package-lock.json`
 
-To ensure version consistency across team members.
+This ensures consistent versions across all team members.
 
 ---
 
 ## 👥 Team Workflow
 
-- Main branch → Production-ready code
-- Feature branches → New features
-- Pull requests → Code review before merge
+* `main` → Production-ready code
+* Feature branches → New features
+* Pull requests → Code review before merge
 
 ---
 
-## 🏗 Future Enhancements
+## 🚀 Future Enhancements
 
-- Convert to Progressive Web App (PWA)
-- Convert to React Native mobile app
-- Dark mode support
-- Notification system
-
----
-
-## 📜 License
-
-This project is developed for educational and portfolio purposes.
+* Progressive Web App (PWA)
+* React Native Mobile Version
+* Dark Mode Support
+* Notification System
 
 ---
 
 ## 👨‍💻 Authors
 
 Developed by:
-- Kushal
-- Team Member
+
+* Mallikarjun jamabar
+* Kushal B
+* Sandeep B
 
 ---
 
 ⭐ If you like this project, give it a star!
-```
-
----
-
-# 🔥 Optional: Make It More Premium
-
-You can add:
-
-* Screenshots
-* Live demo link
-* Backend repo link
-* GIF preview
-
-Example section:
-
-```markdown
-## 📸 Screenshots
-
-![Landing Page](./screenshots/landing.png)
-```
-
----
-
-# 🎯 This README Is Good Because:
-
-✔ Clean
-✔ Structured
-✔ Professional
-✔ Recruiter-ready
-✔ GitHub portfolio friendly
-✔ Shows tech stack clearly
-
----
-
-If you want, I can now:
-
-* Make an even more advanced README (enterprise style)
-* Add backend integration section
-* Help you write GitHub project description
-* Help you write LinkedIn project description
-
-Tell me 👇
