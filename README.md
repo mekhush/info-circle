@@ -16,6 +16,76 @@ npm run dev
 
 Always create a new branch for your feature.
 
+```bash
+# 1️⃣ Make sure main is updated first
+git checkout main
+git pull origin main
+
+# 2️⃣ Create new branch
+git checkout -b new-branch-name
+
+# 3️⃣ Add changes
+git add .
+
+# 4️⃣ Commit changes
+git commit -m "Meaningful commit message"
+
+# 5️⃣ Push branch to GitHub (FIRST TIME ONLY)
+git push -u origin new-branch-name
+```
+
+---
+
+# 🔎 Why `-u` Is Important
+
+This part:
+
+```bash
+git push -u origin new-branch-name
+```
+
+The `-u` means:
+
+👉 "Set upstream branch"
+
+After this, Git remembers the remote branch.
+
+So next time you can just run:
+
+```bash
+git push
+```
+
+Without writing branch name again.
+
+If you forget `-u` the first time, then `git push` alone will NOT work.
+
+You’d need:
+
+```bash
+git push --set-upstream origin new-branch-name
+```
+
+So yes — your inclusion of `-u` is correct and important.
+
+---
+
+# ✅ Then GitHub Part
+
+Your explanation:
+
+> login to your GitHub account and see the pull request and merge to main
+
+Correct — but slightly more accurate wording:
+
+1. Go to GitHub repository
+2. Click **Compare & Pull Request**
+3. Create Pull Request
+4. Review changes
+5. Click **Merge Pull Request**
+6. Confirm merge
+
+
 ---
 
 ## 🟢 Step 1: Create a New Branch
