@@ -29,6 +29,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   const isAdmin = () => {
     return user?.isAdmin === true || user?.email?.includes('admin');
   };
@@ -40,6 +45,7 @@ export const AuthProvider = ({ children }) => {
         login, 
         signup, 
         logout, 
+        updateUser,
         isAuthenticated: !!user,
         isAdmin: isAdmin(),
         loading 

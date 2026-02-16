@@ -6,6 +6,13 @@ const LandingPage = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  // ✅ Redirect non-authenticated users to login when clicking categories
+  const handleCategoryClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Hero Banner Section - Full viewport */}
@@ -103,7 +110,7 @@ const LandingPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Technology */}
-            <div className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-blue-100 hover:border-blue-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-blue-100 hover:border-blue-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">💻</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Technology</h3>
               <p className="text-gray-600 text-sm mb-3">Software, Hardware, AI & more</p>
@@ -113,7 +120,7 @@ const LandingPage = () => {
             </div>
             
             {/* Healthcare */}
-            <div className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-green-100 hover:border-green-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-green-100 hover:border-green-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🏥</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Healthcare</h3>
               <p className="text-gray-600 text-sm mb-3">Medical advice & wellness tips</p>
@@ -123,7 +130,7 @@ const LandingPage = () => {
             </div>
             
             {/* Geopolitics */}
-            <div className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-purple-100 hover:border-purple-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-purple-100 hover:border-purple-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🌍</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Geopolitics</h3>
               <p className="text-gray-600 text-sm mb-3">World events & discussions</p>
@@ -133,7 +140,7 @@ const LandingPage = () => {
             </div>
             
             {/* Education */}
-            <div className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-orange-100 hover:border-orange-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-orange-100 hover:border-orange-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">📚</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Education</h3>
               <p className="text-gray-600 text-sm mb-3">Learning & career guidance</p>
@@ -143,7 +150,7 @@ const LandingPage = () => {
             </div>
             
             {/* Business */}
-            <div className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">💼</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Business</h3>
               <p className="text-gray-600 text-sm mb-3">Startups & entrepreneurship</p>
@@ -153,7 +160,7 @@ const LandingPage = () => {
             </div>
             
             {/* Science */}
-            <div className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-indigo-100 hover:border-indigo-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-indigo-100 hover:border-indigo-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🔬</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Science</h3>
               <p className="text-gray-600 text-sm mb-3">Physics, Chemistry, Biology</p>
