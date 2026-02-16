@@ -2,25 +2,32 @@ import api from './api';
 
 export const authService = {
   signup: async (userData) => {
-    const response = await api.post('/user/insertUser', userData);
-    return response.data;
+    try {
+      const response = await api.post('/auth/signup', userData);
+      const { token, user } = response.data;
+      
+      // Store token and user in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      return user;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Signup failed');
+    }
   },
 
   login: async (email, password) => {
-    // Simple login - finds user by email/password
-    // Note: Your backend doesn't have a login endpoint yet
-    const response = await api.get('/user/allUsers');
-    const user = response.data.find(
-      u => u.email === email && u.password === password
-    );
-    
-    if (user) {
-      const token = btoa(`${email}:${password}`); // Simple token
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const { token, user } = response.data;
+      
+      // Store token and user in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
+      
       return user;
-    } else {
-      throw new Error('Invalid credentials');
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Invalid email or password');
     }
   },
 
