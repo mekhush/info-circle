@@ -1,42 +1,61 @@
+// ── WHAT CHANGED (same exact design, logic fixes only) ──────────────────────
+//
+// BUG 1: handleCategoryClick did nothing when user WAS authenticated.
+//   Old: if (!isAuthenticated) { navigate('/login') }
+//        → Logged-in user clicks → function exits silently. No navigation.
+//   Fix: navigate('/home?category=slug') when authenticated.
+//
+// BUG 2: All 6 cards called handleCategoryClick() with NO argument.
+//   Old: onClick={handleCategoryClick}          ← same handler, zero info
+//   Fix: onClick={() => handleCategoryClick('technology')}  ← passes slug
+//        so logged-in users get routed to the right category filter on /home
+//
+// Design: 100% unchanged — every class, color, animation, section is identical.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const LandingPage = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // ✅ Redirect non-authenticated users to login when clicking categories
-  const handleCategoryClick = () => {
-    if (!isAuthenticated) {
+  // ✅ Fixed: handles both states correctly now
+  const handleCategoryClick = (categorySlug) => {
+    if (isAuthenticated) {
+      navigate(`/home?category=${categorySlug}`);
+    } else {
       navigate('/login');
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+
       {/* Hero Banner Section - Full viewport */}
       <div className="relative flex justify-center items-center min-h-screen px-5 py-20 overflow-hidden">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-16 w-[85%] max-w-7xl z-10">
+
           {/* Left Content */}
           <div className="flex-1 max-w-xl text-center lg:text-left">
             <span className="inline-block px-5 py-2 rounded-full bg-white/80 backdrop-blur-md border border-blue-200 text-blue-600 text-sm font-medium mb-5 shadow-lg">
               ✨ Knowledge Sharing Platform
             </span>
-            
+
             <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight mb-5">
               Ask. Answer.
               <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent pb-4">
                 {' '}Learn Together.
               </span>
             </h1>
-            
+
             <p className="text-lg text-gray-600 mb-10 leading-relaxed">
-              Join thousands of curious minds exploring topics from Technology 
-              to Healthcare. Get instant answers from experts and enthusiasts alike.<br></br>
-              A place to share knowledge & ideas
+              Join thousands of curious minds exploring topics from Technology
+              to Healthcare. Get instant answers from experts and enthusiasts alike.<br />
+              A place to share knowledge &amp; ideas
             </p>
-            
+
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
               {isAuthenticated ? (
                 <>
@@ -71,7 +90,7 @@ const LandingPage = () => {
               )}
             </div>
           </div>
-          
+
           {/* Right Side - Floating Cards */}
           <div className="relative flex-1 h-[450px] w-full flex items-center justify-center">
             <div className="absolute top-[20%] left-[10%] animate-float">
@@ -81,7 +100,7 @@ const LandingPage = () => {
                 <p className="text-sm text-gray-600">Questions Asked</p>
               </div>
             </div>
-            
+
             <div className="absolute top-[50%] right-[15%] animate-float animation-delay-1000">
               <div className="p-6 rounded-2xl bg-white/5 backdrop-blur border border-purple-200 shadow-xl text-center min-w-[160px]">
                 <div className="text-5xl mb-3">⚡</div>
@@ -89,7 +108,7 @@ const LandingPage = () => {
                 <p className="text-sm text-gray-600">Instant Answers</p>
               </div>
             </div>
-            
+
             <div className="absolute bottom-[15%] left-[25%] animate-float animation-delay-2000">
               <div className="p-6 rounded-2xl bg-white/5 backdrop-blur border border-pink-200 shadow-xl text-center min-w-[160px]">
                 <div className="text-5xl mb-3">👥</div>
@@ -98,6 +117,7 @@ const LandingPage = () => {
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -107,60 +127,74 @@ const LandingPage = () => {
           <h2 className="text-5xl font-extrabold text-center mb-12 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
             Explore Popular Categories
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Technology */}
-            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-blue-100 hover:border-blue-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+
+            {/* ✅ Each card now passes its own slug */}
+            <div
+              onClick={() => handleCategoryClick('technology')}
+              className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-blue-100 hover:border-blue-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2"
+            >
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">💻</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Technology</h3>
-              <p className="text-gray-600 text-sm mb-3">Software, Hardware, AI & more</p>
+              <p className="text-gray-600 text-sm mb-3">Software, Hardware, AI &amp; more</p>
               <span className="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
                 2.5K+ Questions
               </span>
             </div>
-            
-            {/* Healthcare */}
-            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-green-100 hover:border-green-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+
+            <div
+              onClick={() => handleCategoryClick('healthcare')}
+              className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-green-100 hover:border-green-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2"
+            >
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🏥</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Healthcare</h3>
-              <p className="text-gray-600 text-sm mb-3">Medical advice & wellness tips</p>
+              <p className="text-gray-600 text-sm mb-3">Medical advice &amp; wellness tips</p>
               <span className="inline-block px-4 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
                 1.8K+ Questions
               </span>
             </div>
-            
-            {/* Geopolitics */}
-            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-purple-100 hover:border-purple-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+
+            <div
+              onClick={() => handleCategoryClick('geopolitics')}
+              className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-purple-100 hover:border-purple-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2"
+            >
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🌍</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Geopolitics</h3>
-              <p className="text-gray-600 text-sm mb-3">World events & discussions</p>
+              <p className="text-gray-600 text-sm mb-3">World events &amp; discussions</p>
               <span className="inline-block px-4 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold">
                 1.2K+ Questions
               </span>
             </div>
-            
-            {/* Education */}
-            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-orange-100 hover:border-orange-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+
+            <div
+              onClick={() => handleCategoryClick('education')}
+              className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-orange-100 hover:border-orange-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2"
+            >
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">📚</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Education</h3>
-              <p className="text-gray-600 text-sm mb-3">Learning & career guidance</p>
+              <p className="text-gray-600 text-sm mb-3">Learning &amp; career guidance</p>
               <span className="inline-block px-4 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold">
                 3.1K+ Questions
               </span>
             </div>
-            
-            {/* Business */}
-            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+
+            <div
+              onClick={() => handleCategoryClick('business')}
+              className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-pink-100 hover:border-pink-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2"
+            >
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">💼</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Business</h3>
-              <p className="text-gray-600 text-sm mb-3">Startups & entrepreneurship</p>
+              <p className="text-gray-600 text-sm mb-3">Startups &amp; entrepreneurship</p>
               <span className="inline-block px-4 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-semibold">
                 900+ Questions
               </span>
             </div>
-            
-            {/* Science */}
-            <div onClick={handleCategoryClick} className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-indigo-100 hover:border-indigo-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2">
+
+            <div
+              onClick={() => handleCategoryClick('science')}
+              className="group p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-indigo-100 hover:border-indigo-300 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-2"
+            >
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">🔬</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Science</h3>
               <p className="text-gray-600 text-sm mb-3">Physics, Chemistry, Biology</p>
@@ -168,6 +202,7 @@ const LandingPage = () => {
                 1.5K+ Questions
               </span>
             </div>
+
           </div>
         </div>
       </div>
@@ -178,16 +213,16 @@ const LandingPage = () => {
           <h2 className="text-5xl font-extrabold text-center mb-16 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
             Why Choose InfoCircle?
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-white border border-blue-100 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <div className="text-6xl mb-5">🎯</div>
               <h3 className="text-xl font-bold text-gray-800 mb-3">Focused Discussions</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Get straight to the point with organized Q&A format
+                Get straight to the point with organized Q&amp;A format
               </p>
             </div>
-            
+
             <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <div className="text-6xl mb-5">👨‍🏫</div>
               <h3 className="text-xl font-bold text-gray-800 mb-3">Expert Answers</h3>
@@ -195,7 +230,7 @@ const LandingPage = () => {
                 Learn from experienced professionals and enthusiasts
               </p>
             </div>
-            
+
             <div className="p-8 rounded-2xl bg-gradient-to-br from-pink-50 to-white border border-pink-100 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <div className="text-6xl mb-5">🔍</div>
               <h3 className="text-xl font-bold text-gray-800 mb-3">Easy Search</h3>
@@ -203,7 +238,7 @@ const LandingPage = () => {
                 Find answers quickly with powerful search and filters
               </p>
             </div>
-            
+
             <div className="p-8 rounded-2xl bg-gradient-to-br from-green-50 to-white border border-green-100 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <div className="text-6xl mb-5">🌐</div>
               <h3 className="text-xl font-bold text-gray-800 mb-3">Global Community</h3>
@@ -234,6 +269,7 @@ const LandingPage = () => {
           )}
         </div>
       </div>
+
     </div>
   );
 };
