@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Restore user from localStorage on page refresh
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     setUser(currentUser);
@@ -19,9 +20,11 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
-  const signup = async (userData) => {
-    const newUser = await authService.signup(userData);
-    return newUser;
+  const signup = async (formData) => {
+    const userData = await authService.signup(formData);
+    // authService.signup auto-logins, so userData is the full user object
+    setUser(userData);
+    return userData;
   };
 
   const logout = () => {
@@ -29,26 +32,41 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // Called after profile edit to keep context + localStorage in sync
   const updateUser = (updatedUser) => {
     setUser(updatedUser);
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
+  // ── isAdmin check ────────────────────────────────────────────────────────────
+  // The backend assigns roles via the Role entity.
+  // AppConstant.ADMIN_USER = 501  →  roleName stored as "ADMIN"
+  // AppConstant.NORMAL_USER = 502 →  roleName stored as "USER"
+  //
+  // UserDto exposes:  roles: Set<RoleDto>  where RoleDto = { roleId, roleName }
+  // So we check the roles array that comes back in the user object.
   const isAdmin = () => {
-    return user?.isAdmin === true || user?.email?.includes('admin');
+    if (!user) return false;
+    // Check roles array (preferred — backend driven)
+    if (Array.isArray(user.roles) && user.roles.some((r) => r.roleName === 'ADMIN')) {
+      return true;
+    }
+    // Fallback: email pattern (development convenience)
+    if (user.email?.toLowerCase().includes('admin')) return true;
+    return false;
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        login, 
-        signup, 
-        logout, 
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        signup,
+        logout,
         updateUser,
         isAuthenticated: !!user,
-        isAdmin: isAdmin(),
-        loading 
+        isAdmin,   // ← always a FUNCTION; call it as isAdmin() in components
+        loading,
       }}
     >
       {children}
@@ -58,8 +76,6 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };

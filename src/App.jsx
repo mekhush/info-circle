@@ -8,127 +8,61 @@ import LoginPage from './pages/user/LoginPage';
 import SignupPage from './pages/user/SignupPage';
 import ProfilePage from './pages/user/ProfilePage';
 import ProfileEditPage from './pages/user/ProfileEditPage';
+import CreatePostPage from './pages/user/CreatePostPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
-// Protected Route Component
+// ── Protected Route: must be logged in ────────────────────────────────────────
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
-  
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (loading) return <Spinner />;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-// Admin Route Component
+// ── Admin Route: must be logged in + have ADMIN role ──────────────────────────
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-  
-  if (!isAdmin) {
-    return <Navigate to="/home" />;
-  }
-  
+  if (loading) return <Spinner />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAdmin()) return <Navigate to="/home" replace />;  // isAdmin is a function!
   return children;
 };
+
+const Spinner = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
+  </div>
+);
 
 function AppContent() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        {/* Public Routes */}
+        {/* ── Public ── */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        
-        {/* Protected Routes */}
-        <Route 
-          path="/home" 
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          } 
-        />
-        
-        {/* Profile Routes */}
-        <Route 
-          path="/profile" 
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/profile/edit" 
-          element={
-            <ProtectedRoute>
-              <ProfileEditPage />
-            </ProtectedRoute>
-          } 
-        />
-        
-        {/* Placeholder routes for future features */}
-        <Route 
-          path="/create-post" 
-          element={
-            <ProtectedRoute>
-              <div className="min-h-screen pt-24 px-5">
-                <h1 className="text-3xl font-bold text-center">Ask Question</h1>
-                <p className="text-center text-gray-600 mt-4">
-                  Create post page - coming soon!
-                </p>
-              </div>
-            </ProtectedRoute>
-          } 
-        />
-        
-        {/* Admin Route */}
-        <Route 
-          path="/admin" 
-          element={
-            <AdminRoute>
-              <div className="min-h-screen pt-24 px-5">
-                <h1 className="text-3xl font-bold text-center">Admin Dashboard</h1>
-                <p className="text-center text-gray-600 mt-4">
-                  Admin panel - coming soon!
-                </p>
-              </div>
-            </AdminRoute>
-          } 
-        />
 
-        {/* Catch all - redirect to landing or home based on auth */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* ── Authenticated ── */}
+        <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/profile/edit" element={<ProtectedRoute><ProfileEditPage /></ProtectedRoute>} />
+        <Route path="/create-post" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
+
+        {/* ── Admin ── */}
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+
+        {/* ── Catch-all ── */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <AuthProvider>
       <AppContent />
     </AuthProvider>
   );
 }
-
-export default App;
