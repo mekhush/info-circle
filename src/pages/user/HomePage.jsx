@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import DarkModeToggle from '../../components/common/DarkModeToggle';
 
 // ─── Category meta: emoji + colour per category title ─────────────────────────
 const CATEGORY_META = {
@@ -81,7 +82,7 @@ const PostComposer = ({ user, categories, onPostCreated }) => {
     setSubmitting(true);
     try {
       const res = await api.post(
-        `/api/post/user/${user.userId}/category/${catId}/savePost`,
+        `/post/user/${user.userId}/category/${catId}/savePost`,
         { title: title.trim(), content: content.trim() }
       );
       onPostCreated(res.data);
@@ -220,7 +221,7 @@ const CommentSection = ({ post, user }) => {
     if (!text.trim()) return;
     setSubmitting(true);
     try {
-      const res = await api.post('/api/comment/saveComment', {
+      const res = await api.post(`/comment/post/${post.postId}/saveComment`, {
         content: text.trim(),
         post: { postId: post.postId },
       });
@@ -426,7 +427,7 @@ const HomePage = () => {
 
   // ── Load categories ────────────────────────────────────────────────────────
   useEffect(() => {
-    api.get('/api/category/allCategories')
+    api.get('/category/allCategories')
       .then(res => setCategories(res.data || []))
       .catch(() => setCategories([]))
       .finally(() => setCatLoading(false));
@@ -436,8 +437,8 @@ const HomePage = () => {
   useEffect(() => {
     setFeedLoading(true);
     const endpoint = activeCat
-      ? `/api/post/category/${activeCat}/posts`
-      : '/api/post/allPosts';
+      ? `/post/category/${activeCat}/posts`
+      : '/post/allPosts';
 
     api.get(endpoint)
       .then(res => {
@@ -454,7 +455,7 @@ const HomePage = () => {
     if (!searchQuery.trim()) { setSearchResults(null); return; }
     const debounce = setTimeout(() => {
       setSearchLoading(true);
-      api.get(`/api/post/search/${encodeURIComponent(searchQuery.trim())}/posts`)
+      api.get(`/post/search/${encodeURIComponent(searchQuery.trim())}/posts`)
         .then(res => setSearchResults(Array.isArray(res.data) ? res.data : []))
         .catch(() => setSearchResults([]))
         .finally(() => setSearchLoading(false));
@@ -526,6 +527,9 @@ const HomePage = () => {
 
           {/* Right nav */}
           <div className="flex items-center gap-2">
+            {/* Dark mode toggle */}
+            <DarkModeToggle />
+
             {/* Ask Question CTA */}
             <button
               onClick={() => document.getElementById('composer')?.scrollIntoView({ behavior: 'smooth' })}

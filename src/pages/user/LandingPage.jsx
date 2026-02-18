@@ -14,6 +14,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React from 'react';
+import DarkModeToggle from '../../components/common/DarkModeToggle';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -32,6 +33,10 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Floating dark mode toggle for public page */}
+      <div className="fixed top-5 right-5 z-50">
+        <DarkModeToggle />
+      </div>
 
       {/* Hero Banner Section - Full viewport */}
       <div className="relative flex justify-center items-center min-h-screen px-5 py-20 overflow-hidden">

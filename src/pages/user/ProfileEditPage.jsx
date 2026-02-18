@@ -1,223 +1,254 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+// ProfileEditPage.jsx
+// FIX: This file was incorrectly a copy of SignupPage. Now a proper Edit Profile page.
+// API: PUT /api/user/update/{id}
 
-const SignupPage = () => {
-  // ✅ ONLY 4 FIELDS
-  const [formData, setFormData] = useState({
-    userName: '',
-    email: '',
-    password: '',
-    mobileNumber: '',
-  });
-  
-  const [showPassword, setShowPassword] = useState(false); // ✅ Password visibility toggle
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const { signup } = useAuth();
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { userService } from '../../services/userService';
+
+const hasValue = (val) => val && typeof val === 'string' && val.trim().length > 0 && val.trim() !== ' ';
+
+const ProfileEditPage = () => {
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const [formData, setFormData] = useState({
+    userName:     user?.userName     || '',
+    email:        user?.email        || '',
+    mobileNumber: user?.mobileNumber || '',
+    bio:          hasValue(user?.bio)     ? user.bio.trim()     : '',
+    about:        hasValue(user?.about)   ? user.about.trim()   : '',
+    address:      hasValue(user?.address) ? user.address.trim() : '',
+    city:         hasValue(user?.city)    ? user.city.trim()    : '',
+    pincode:      user?.pincode || '',
+    password:     '',
+  });
+
+  const [photoFile, setPhotoFile]       = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(
+    hasValue(user?.profileImage) ? user.profileImage : null
+  );
+  const [saving, setSaving]   = useState(false);
+  const [error, setError]     = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleChange = (e) =>
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
-
-    // Frontend validation
-    if (!formData.userName || !formData.email || !formData.password || !formData.mobileNumber) {
-      setError('All fields are required');
-      setLoading(false);
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      setLoading(false);
-      return;
-    }
-
-    if (formData.mobileNumber.length !== 10) {
-      setError('Mobile number must be 10 digits');
-      setLoading(false);
-      return;
-    }
+    setSuccess('');
+    setSaving(true);
 
     try {
-      const userData = {
-        userName: formData.userName,
-        email: formData.email,
-        password: formData.password,
-        mobileNumber: parseInt(formData.mobileNumber),
+      const payload = {
+        userName:     formData.userName     || user.userName,
+        email:        formData.email        || user.email,
+        mobileNumber: Number(formData.mobileNumber) || user.mobileNumber || 0,
+        bio:          formData.bio.trim()     || ' ',
+        about:        formData.about.trim()   || ' ',
+        address:      formData.address.trim() || ' ',
+        city:         formData.city.trim()    || ' ',
+        pincode:      Number(formData.pincode) || 0,
+        profileImage: user?.profileImage      || ' ',
+        ...(formData.password.trim() ? { password: formData.password.trim() } : {}),
       };
 
-      await signup(userData);
-      navigate('/home');
+      const updatedUser = await userService.updateUser(user.userId, payload);
+
+      // If photo was chosen, attach preview URL (backend image upload is a separate flow)
+      if (photoFile) {
+        updatedUser.profileImage = photoPreview;
+      }
+
+      updateUser(updatedUser);
+      setSuccess('Profile updated successfully!');
+      setTimeout(() => navigate('/profile'), 1500);
     } catch (err) {
-      setError(err.message || 'Signup failed. Please try again.');
+      setError(
+        err.response?.data?.message || err.message ||
+        'Failed to update profile. Please try again.'
+      );
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
+  const completion = (() => {
+    let score = 25;
+    if (formData.bio.trim())     score += 15;
+    if (formData.about.trim())   score += 15;
+    if (formData.address.trim() && formData.city.trim() && formData.pincode) score += 15;
+    if (photoPreview)            score += 20;
+    return Math.min(score, 100);
+  })();
+
+  const inputClass =
+    'w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-800 transition-all text-sm';
+  const labelClass = 'block text-sm font-medium text-gray-700 mb-1.5';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-5 py-20">
-      <div className="w-full max-w-md bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-2xl p-8">
-        <h2 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pb-2 leading-[1.3]">
-          Create Your Account
-        </h2>
-        <p className="text-center text-gray-600 mb-8">Join InfoCircle community</p>
-        
-        {error && (
-          <div className="mb-6 p-4 bg-red-50/80 backdrop-blur-sm border border-red-200 rounded-xl text-red-600 text-sm">
-            {error}
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* ✅ FIELD 1: User Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              User Name *
-            </label>
-            <input
-              type="text"
-              name="userName"
-              value={formData.userName}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
-              placeholder="John Doe"
-              required
-            />
-          </div>
-          
-          {/* ✅ FIELD 2: Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email *
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20 px-5" style={{ paddingLeft: "calc(var(--sidebar-w, 0px) + 20px)" }}>
+      <div className="max-w-2xl mx-auto">
 
-          {/* ✅ FIELD 3: Password with Toggle Visibility */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password *
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-3 pr-12 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
-                placeholder="At least 6 characters"
-                required
-              />
-              {/* ✅ Password Toggle Button */}
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? (
-                  // Eye icon (password visible)
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                ) : (
-                  // Eye-off icon (password hidden)
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                  </svg>
-                )}
-              </button>
-            </div>
-            {formData.password && formData.password.length < 6 && (
-              <p className="text-xs text-red-500 mt-1">
-                ⚠️ Password must be at least 6 characters
-              </p>
-            )}
-            {formData.password && formData.password.length >= 6 && (
-              <p className="text-xs text-green-500 mt-1">
-                ✓ Password strength: Good
-              </p>
-            )}
-          </div>
-          
-          {/* ✅ FIELD 4: Mobile Number */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mobile Number *
-            </label>
-            <input
-              type="tel"
-              name="mobileNumber"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
-              placeholder="9876543210"
-              maxLength="10"
-              pattern="[0-9]{10}"
-              required
-            />
-            {formData.mobileNumber && formData.mobileNumber.length !== 10 && (
-              <p className="text-xs text-orange-500 mt-1">
-                Mobile number should be 10 digits
-              </p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Creating account...
-              </span>
-            ) : (
-              'Create Account'
-            )}
+        <div className="flex items-center gap-4 mb-8">
+          <button onClick={() => navigate('/profile')}
+            className="p-2 rounded-full hover:bg-white/60 transition-colors text-gray-500">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/>
+            </svg>
           </button>
-          
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Already have an account?{' '}
-            <Link to="/login" className="text-purple-600 font-semibold hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </form>
-
-        <div className="mt-6 p-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200 rounded-xl">
-          <p className="text-xs text-gray-600 text-center">
-            💡 <strong>Quick signup!</strong> You can add more details to your profile later.
-          </p>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Edit Profile</h1>
+            <p className="text-sm text-gray-500">Update your personal information</p>
+          </div>
         </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {error   && <div className="p-4 bg-red-50/80 border border-red-200 rounded-xl text-red-600 text-sm">❌ {error}</div>}
+          {success && <div className="p-4 bg-green-50/80 border border-green-200 rounded-xl text-green-700 text-sm font-medium">✅ {success}</div>}
+
+          {/* Profile Photo */}
+          <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-xl p-6">
+            <h2 className="text-base font-semibold text-gray-800 mb-4">Profile Photo</h2>
+            <div className="flex items-center gap-6">
+              <div className="flex-shrink-0">
+                {photoPreview ? (
+                  <img src={photoPreview} alt="Preview"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-purple-300 shadow-lg"/>
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-3xl font-bold border-4 border-white shadow-lg">
+                    {user?.userName?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-dashed border-purple-300 text-purple-600 font-medium text-sm hover:bg-purple-50 hover:border-purple-400 transition-all">
+                  📷 {photoPreview ? 'Change Photo' : 'Upload Photo'}
+                  <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange}/>
+                </label>
+                <p className="text-xs text-gray-400 mt-2">JPG, PNG or GIF · Max 5 MB</p>
+                {photoFile && <p className="text-xs text-green-600 mt-1 font-medium">✓ {photoFile.name} selected</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Basic Info */}
+          <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-xl p-6 space-y-4">
+            <h2 className="text-base font-semibold text-gray-800">Basic Information</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Username</label>
+                <input type="text" name="userName" value={formData.userName}
+                  onChange={handleChange} className={inputClass} placeholder="Your name" required/>
+              </div>
+              <div>
+                <label className={labelClass}>Mobile Number</label>
+                <input type="tel" name="mobileNumber" value={formData.mobileNumber}
+                  onChange={handleChange} className={inputClass} placeholder="10-digit mobile" maxLength="10"/>
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Email Address</label>
+              <input type="email" name="email" value={formData.email}
+                className={inputClass + ' opacity-60 cursor-not-allowed'} readOnly
+                title="Email cannot be changed"/>
+              <p className="text-xs text-gray-400 mt-1">Email cannot be changed.</p>
+            </div>
+            <div>
+              <label className={labelClass}>Short Bio</label>
+              <input type="text" name="bio" value={formData.bio} onChange={handleChange}
+                className={inputClass} placeholder="e.g. Software engineer · Coffee lover" maxLength="120"/>
+              <p className="text-xs text-gray-400 mt-1 text-right">{formData.bio.length}/120</p>
+            </div>
+            <div>
+              <label className={labelClass}>About</label>
+              <textarea name="about" value={formData.about} onChange={handleChange}
+                className={inputClass + ' resize-none'} rows={4}
+                placeholder="Tell the community about yourself..."/>
+            </div>
+          </div>
+
+          {/* Location */}
+          <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-xl p-6 space-y-4">
+            <h2 className="text-base font-semibold text-gray-800">📍 Location</h2>
+            <div>
+              <label className={labelClass}>Address</label>
+              <input type="text" name="address" value={formData.address}
+                onChange={handleChange} className={inputClass} placeholder="Street / Area"/>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>City</label>
+                <input type="text" name="city" value={formData.city}
+                  onChange={handleChange} className={inputClass} placeholder="City"/>
+              </div>
+              <div>
+                <label className={labelClass}>Pincode</label>
+                <input type="number" name="pincode" value={formData.pincode}
+                  onChange={handleChange} className={inputClass} placeholder="000000"/>
+              </div>
+            </div>
+          </div>
+
+          {/* Password */}
+          <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-xl p-6">
+            <h2 className="text-base font-semibold text-gray-800 mb-4">🔒 Change Password</h2>
+            <div>
+              <label className={labelClass}>New Password <span className="text-gray-400 font-normal">(leave blank to keep current)</span></label>
+              <input type="password" name="password" value={formData.password}
+                onChange={handleChange} className={inputClass} placeholder="Enter new password" minLength={6}/>
+            </div>
+          </div>
+
+          {/* Completion bar */}
+          <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-2xl p-4 flex items-center gap-4">
+            <div className="flex-1">
+              <div className="flex justify-between mb-1">
+                <span className="text-xs text-gray-500 font-medium">Profile Completion</span>
+                <span className="text-xs font-bold text-purple-600">{completion}%</span>
+              </div>
+              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full transition-all duration-500"
+                  style={{ width: `${completion}%` }}/>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button type="button" onClick={() => navigate('/profile')}
+              className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-600 font-semibold hover:bg-gray-50 transition-all">
+              Cancel
+            </button>
+            <button type="submit" disabled={saving}
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:shadow-xl hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:scale-100">
+              {saving ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                  </svg>
+                  Saving…
+                </span>
+              ) : '💾 Save Changes'}
+            </button>
+          </div>
+
+        </form>
       </div>
     </div>
   );
 };
 
-export default SignupPage;
+export default ProfileEditPage;

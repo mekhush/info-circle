@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DarkModeToggle from '../../components/common/DarkModeToggle';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -68,6 +69,10 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-5 py-20">
+      {/* Floating dark mode toggle */}
+      <div className="fixed top-5 right-5 z-50">
+        <DarkModeToggle />
+      </div>
       <div className="w-full max-w-md bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-2xl p-8">
         <h2 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pb-2 leading-[1.3]">
           Create Your Account
