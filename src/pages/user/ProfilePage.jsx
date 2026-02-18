@@ -48,7 +48,7 @@ const ProfilePage = () => {
   const userRole = user?.roles?.find((r) => r.roleName === 'ADMIN') ? 'ADMIN' : 'USER';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20 px-5">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20 px-5" style={{ paddingLeft: "calc(var(--sidebar-w, 0px) + 20px)" }}>
       <div className="max-w-4xl mx-auto">
 
         {/* ── Profile Header ────────────────────────────────────────────────── */}
