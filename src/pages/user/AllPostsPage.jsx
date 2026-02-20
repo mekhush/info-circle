@@ -71,7 +71,7 @@ const AllPostsPage = () => {
 
   const sortedPosts = [...posts].sort((a, b) => {
     if (sortBy === 'popular') {
-      return (b.comment?.length || 0) - (a.comment?.length || 0);
+      return (b.comments?.length || 0) - (a.comments?.length || 0);
     }
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
@@ -159,7 +159,11 @@ const AllPostsPage = () => {
                       )}
                       {post.category && (
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${meta.bg} ${meta.text}`}>
-                          {meta.emoji} {post.category.categoryTitle}
+                          {post.category.categoryImage
+                            ? <img src={post.category.categoryImage} alt="" className="w-4 h-4 rounded-full object-cover" onError={e => { e.target.style.display='none'; }}/>
+                            : meta.emoji
+                          }
+                          {post.category.categoryTitle}
                         </span>
                       )}
                     </div>
@@ -179,9 +183,21 @@ const AllPostsPage = () => {
                     </button>
                   )}
 
+                  {/* Post image (R4) */}
+                  {post.postImage && (
+                    <div className="mt-3 rounded-xl overflow-hidden border border-white/60">
+                      <img
+                        src={`http://localhost:8080/api/post/post/image/${post.postImage}`}
+                        alt="Post media"
+                        className="w-full max-h-72 object-cover"
+                        onError={e => e.target.style.display='none'}
+                      />
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-4 pt-3 mt-3 border-t border-white/40">
                     <span className="text-xs text-gray-400">
-                      💬 {post.comment?.length || 0} answer{(post.comment?.length || 0) !== 1 ? 's' : ''}
+                      💬 {post.comments?.length || 0} thought{(post.comments?.length || 0) !== 1 ? 's' : ''}
                     </span>
                   </div>
                 </div>

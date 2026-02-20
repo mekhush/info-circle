@@ -26,15 +26,12 @@
 }
 .nav-item-enter { animation: slideInLeft 0.3s ease forwards; }
 
-/* ── Smooth theme transition on EVERY element ─────────────────────────────── */
-*,
-*::before,
-*::after {
+/* ── Smooth theme transition ──────────────────────────────────────────────── */
+*, *::before, *::after {
   transition-property: background-color, border-color, color, fill, stroke, box-shadow;
   transition-duration: 200ms;
   transition-timing-function: ease;
 }
-/* Don't slow down transforms/opacity that are used for animations */
 .animate-spin, .animate-bounce, .animate-pulse,
 [class*="hover:scale"], [class*="hover:-translate"] {
   transition-duration: 0ms !important;
@@ -43,13 +40,10 @@
 /* ── Scrollbar ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f1f5f9; }
-.dark ::-webkit-scrollbar-track { background: #1e293b; }
+.dark ::-webkit-scrollbar-track { background: #111111; }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #3B82F6, #8B5CF6);
   border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────────── */
@@ -64,206 +58,201 @@ body {
 button { font-family: inherit; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   DARK MODE OVERRIDES
-   Strategy: target the exact Tailwind classes used across every page/component
-   No JSX changes needed — just adding .dark prefix rules here.
+   DARK MODE — TRUE BLACK PREMIUM THEME
+   Strategy: .dark class on <html> → CSS overrides cascade to all elements
+   Text uses near-white (#f1f5f9, #e2e8f0, #cbd5e1) for maximum legibility
+   Backgrounds use true blacks and very dark grays (#0a0a0a, #111, #1a1a1a)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Page backgrounds ─────────────────────────────────────────────────────── */
-.dark .min-h-screen,
-.dark body {
-  background-color: #0f172a !important;
+/* ── Root / Body background — TRUE BLACK ─────────────────────────────────── */
+.dark body,
+.dark html {
+  background-color: #0a0a0a !important;
+  color: #f1f5f9 !important;
 }
 
-/* The blue-50/white/purple-50 gradient used on nearly every page */
-.dark .bg-gradient-to-br.from-blue-50.via-white.to-purple-50,
-.dark [class*="from-blue-50"][class*="via-white"][class*="to-purple-50"] {
-  background-image: linear-gradient(to bottom right, #0f172a, #1e1b4b, #0f172a) !important;
+.dark .min-h-screen {
+  background-color: #0a0a0a !important;
 }
 
-/* ── Glass cards (bg-white/40, bg-white/60, bg-white/70, bg-white/80) ─────── */
+/* ── Page gradient backgrounds → true dark ───────────────────────────────── */
+.dark [class*="from-blue-50"][class*="via-white"],
+.dark [class*="from-blue-50"][class*="to-purple-50"],
+.dark .bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, #0a0a0a, #111827, #0a0a0a) !important;
+}
+
+/* ── Glass cards: bg-white/* → very dark glass ───────────────────────────── */
 .dark [class*="bg-white/"] {
-  background-color: rgba(30, 27, 75, 0.6) !important;
+  background-color: rgba(20, 20, 20, 0.85) !important;
 }
 .dark .bg-white {
-  background-color: #1e1b4b !important;
+  background-color: #111111 !important;
 }
 
-/* ── Borders ──────────────────────────────────────────────────────────────── */
+/* ── Borders → subtle white lines ────────────────────────────────────────── */
 .dark [class*="border-white/"] {
-  border-color: rgba(139, 92, 246, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
-.dark .border-gray-100 { border-color: #312e81 !important; }
-.dark .border-gray-200 { border-color: #3730a3 !important; }
-.dark .border-gray-300 { border-color: #4338ca !important; }
+.dark .border-gray-100 { border-color: rgba(255,255,255,0.06) !important; }
+.dark .border-gray-200 { border-color: rgba(255,255,255,0.08) !important; }
+.dark .border-gray-300 { border-color: rgba(255,255,255,0.12) !important; }
+.dark .border-blue-200  { border-color: rgba(99, 179, 237, 0.25) !important; }
+.dark .border-purple-200{ border-color: rgba(167, 139, 250, 0.25) !important; }
+.dark .border-purple-300{ border-color: rgba(167, 139, 250, 0.35) !important; }
+.dark .border-red-200   { border-color: rgba(252, 129, 129, 0.3) !important; }
+.dark .border-green-200 { border-color: rgba(110, 231, 183, 0.3) !important; }
+.dark .border-red-300   { border-color: rgba(252, 129, 129, 0.4) !important; }
 
-/* ── Text colors ──────────────────────────────────────────────────────────── */
-.dark .text-gray-800 { color: #e2e8f0 !important; }
-.dark .text-gray-700 { color: #cbd5e1 !important; }
-.dark .text-gray-600 { color: #94a3b8 !important; }
-.dark .text-gray-500 { color: #64748b !important; }
-.dark .text-gray-400 { color: #475569 !important; }
-.dark .text-gray-300 { color: #334155 !important; }
+/* ── ALL TEXT — use bright whites / light grays for contrast ─────────────── */
+.dark .text-gray-800 { color: #f1f5f9 !important; }   /* headings → near white */
+.dark .text-gray-700 { color: #e2e8f0 !important; }   /* body text → white-ish */
+.dark .text-gray-600 { color: #cbd5e1 !important; }   /* secondary → light gray */
+.dark .text-gray-500 { color: #94a3b8 !important; }   /* muted → slate */
+.dark .text-gray-400 { color: #64748b !important; }   /* very muted */
+.dark .text-gray-300 { color: #475569 !important; }   /* dividers */
 
-/* ── Inputs, selects, textareas ───────────────────────────────────────────── */
+/* ── Accent / colored text — keep vivid ──────────────────────────────────── */
+.dark .text-blue-600   { color: #60a5fa !important; }
+.dark .text-blue-700   { color: #93c5fd !important; }
+.dark .text-blue-500   { color: #60a5fa !important; }
+.dark .text-purple-600 { color: #c084fc !important; }
+.dark .text-purple-700 { color: #d8b4fe !important; }
+.dark .text-pink-700   { color: #f9a8d4 !important; }
+.dark .text-green-500  { color: #4ade80 !important; }
+.dark .text-green-600  { color: #22c55e !important; }
+.dark .text-green-700  { color: #86efac !important; }
+.dark .text-orange-700 { color: #fdba74 !important; }
+.dark .text-indigo-700 { color: #a5b4fc !important; }
+.dark .text-red-500    { color: #f87171 !important; }
+.dark .text-red-600    { color: #ef4444 !important; }
+.dark .text-red-700    { color: #fca5a5 !important; }
+.dark .text-orange-500 { color: #fb923c !important; }
+
+/* ── Inputs, selects, textareas — dark bg, bright text ───────────────────── */
 .dark input,
 .dark textarea,
 .dark select {
-  background-color: rgba(15, 23, 42, 0.8) !important;
-  border-color: rgba(139, 92, 246, 0.3) !important;
-  color: #e2e8f0 !important;
+  background-color: #1a1a1a !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f1f5f9 !important;
 }
 .dark input::placeholder,
-.dark textarea::placeholder {
-  color: #475569 !important;
-}
+.dark textarea::placeholder { color: #475569 !important; }
 .dark input:focus,
 .dark textarea:focus,
 .dark select:focus {
   border-color: #7c3aed !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3) !important;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.4) !important;
 }
 .dark select option {
-  background-color: #1e1b4b !important;
-  color: #e2e8f0 !important;
+  background-color: #111111 !important;
+  color: #f1f5f9 !important;
 }
 
-/* ── Category / light-colored badge bg ───────────────────────────────────── */
-.dark .bg-blue-50   { background-color: rgba(30, 58, 138, 0.4) !important; }
-.dark .bg-blue-100  { background-color: rgba(30, 58, 138, 0.5) !important; }
-.dark .bg-purple-50 { background-color: rgba(76, 29, 149, 0.4) !important; }
-.dark .bg-purple-100{ background-color: rgba(76, 29, 149, 0.5) !important; }
-.dark .bg-green-50  { background-color: rgba(6, 78, 59, 0.4) !important; }
-.dark .bg-green-100 { background-color: rgba(6, 78, 59, 0.5) !important; }
-.dark .bg-red-50    { background-color: rgba(127, 29, 29, 0.4) !important; }
-.dark .bg-red-100   { background-color: rgba(127, 29, 29, 0.5) !important; }
-.dark .bg-orange-50 { background-color: rgba(120, 53, 15, 0.4) !important; }
-.dark .bg-orange-100{ background-color: rgba(120, 53, 15, 0.5) !important; }
-.dark .bg-pink-50   { background-color: rgba(131, 24, 67, 0.4) !important; }
-.dark .bg-pink-100  { background-color: rgba(131, 24, 67, 0.5) !important; }
-.dark .bg-indigo-50 { background-color: rgba(49, 46, 129, 0.4) !important; }
-.dark .bg-indigo-100{ background-color: rgba(49, 46, 129, 0.5) !important; }
-.dark .bg-yellow-50 { background-color: rgba(113, 63, 18, 0.4) !important; }
+/* ── Light-coloured badge backgrounds → dark equivalents ─────────────────── */
+.dark .bg-blue-50    { background-color: rgba(30, 58, 138, 0.35) !important; }
+.dark .bg-blue-100   { background-color: rgba(30, 58, 138, 0.45) !important; }
+.dark .bg-purple-50  { background-color: rgba(88, 28, 135, 0.35) !important; }
+.dark .bg-purple-100 { background-color: rgba(88, 28, 135, 0.45) !important; }
+.dark .bg-green-50   { background-color: rgba(6, 78, 59, 0.35) !important; }
+.dark .bg-green-100  { background-color: rgba(6, 78, 59, 0.45) !important; }
+.dark .bg-red-50     { background-color: rgba(127, 29, 29, 0.35) !important; }
+.dark .bg-red-100    { background-color: rgba(127, 29, 29, 0.45) !important; }
+.dark .bg-orange-50  { background-color: rgba(120, 53, 15, 0.35) !important; }
+.dark .bg-orange-100 { background-color: rgba(120, 53, 15, 0.45) !important; }
+.dark .bg-pink-50    { background-color: rgba(131, 24, 67, 0.35) !important; }
+.dark .bg-pink-100   { background-color: rgba(131, 24, 67, 0.45) !important; }
+.dark .bg-indigo-50  { background-color: rgba(49, 46, 129, 0.35) !important; }
+.dark .bg-indigo-100 { background-color: rgba(49, 46, 129, 0.45) !important; }
+.dark .bg-yellow-50  { background-color: rgba(113, 63, 18, 0.35) !important; }
 
-/* ── Category text colors (keep them slightly brighter in dark) ───────────── */
-.dark .text-blue-700   { color: #93c5fd !important; }
-.dark .text-purple-700 { color: #c4b5fd !important; }
-.dark .text-green-700  { color: #86efac !important; }
-.dark .text-orange-700 { color: #fdba74 !important; }
-.dark .text-pink-700   { color: #f9a8d4 !important; }
-.dark .text-indigo-700 { color: #a5b4fc !important; }
-.dark .text-red-700    { color: #fca5a5 !important; }
+/* ── Neutral button/tab backgrounds ──────────────────────────────────────── */
+.dark .bg-gray-100 { background-color: #1a1a1a !important; }
+.dark .bg-gray-200 { background-color: #222222 !important; }
+.dark .bg-gray-50  { background-color: #111111 !important; }
+.dark .bg-gray-100\/80 { background-color: rgba(26,26,26,0.8) !important; }
+.dark .bg-gray-200\/80 { background-color: rgba(34,34,34,0.8) !important; }
+.dark .hover\:bg-gray-50:hover   { background-color: #1a1a1a !important; }
+.dark .hover\:bg-gray-100:hover  { background-color: #222222 !important; }
+.dark .hover\:bg-gray-200:hover  { background-color: #2a2a2a !important; }
+.dark .hover\:bg-gray-300:hover  { background-color: #333333 !important; }
+.dark .hover\:bg-purple-50:hover { background-color: rgba(88,28,135,0.25) !important; }
+.dark .hover\:bg-red-50:hover    { background-color: rgba(127,29,29,0.25) !important; }
+.dark .hover\:bg-blue-50:hover   { background-color: rgba(30,58,138,0.25) !important; }
+.dark .hover\:bg-white\/60:hover { background-color: rgba(255,255,255,0.05) !important; }
+.dark .hover\:bg-white\/80:hover { background-color: rgba(255,255,255,0.07) !important; }
 
-/* ── Neutral grays used for buttons, tabs, skeletons ─────────────────────── */
-.dark .bg-gray-100 { background-color: #1e2d4a !important; }
-.dark .bg-gray-200 { background-color: #253354 !important; }
-.dark .bg-gray-50  { background-color: #172035 !important; }
-.dark .hover\:bg-gray-50:hover  { background-color: #172035 !important; }
-.dark .hover\:bg-gray-100:hover { background-color: #1e2d4a !important; }
-.dark .hover\:bg-gray-200:hover { background-color: #253354 !important; }
-
-/* ── Specific colored hover states ───────────────────────────────────────── */
-.dark .hover\:bg-purple-50:hover { background-color: rgba(76, 29, 149, 0.3) !important; }
-.dark .hover\:bg-red-50:hover    { background-color: rgba(127, 29, 29, 0.3) !important; }
-.dark .hover\:bg-blue-50:hover   { background-color: rgba(30, 58, 138, 0.3) !important; }
-
-/* ── Dividers / horizontal rules ─────────────────────────────────────────── */
+/* ── Dividers ─────────────────────────────────────────────────────────────── */
 .dark hr,
-.dark .border-t,
-.dark .border-b {
-  border-color: rgba(139, 92, 246, 0.15) !important;
+.dark [class*="divide-white"] > * + * {
+  border-color: rgba(255,255,255,0.06) !important;
 }
 .dark [class*="border-white/40"],
 .dark [class*="border-white/60"] {
-  border-color: rgba(139, 92, 246, 0.2) !important;
+  border-color: rgba(255,255,255,0.07) !important;
 }
 
-/* ── Skeleton loaders (animate-pulse) ────────────────────────────────────── */
-.dark .animate-pulse [class*="bg-gray-"],
-.dark .animate-pulse [class*="bg-blue-"],
-.dark .animate-pulse [class*="bg-purple-"] {
-  background-color: #1e2d4a !important;
+/* ── Skeleton loaders ─────────────────────────────────────────────────────── */
+.dark .animate-pulse [class*="bg-"] {
+  background-color: #1a1a1a !important;
 }
 
-/* ── Backdrop blur panels (sidebar, dropdowns, cards) ────────────────────── */
-.dark [class*="backdrop-blur"] {
-  --tw-backdrop-blur: blur(24px);
+/* ── HomePage sticky top navbar ───────────────────────────────────────────── */
+.dark nav[class*="bg-white/70"],
+.dark nav[class*="bg-white"] {
+  background-color: rgba(10, 10, 10, 0.95) !important;
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
-/* ── HomePage specific: the floating top navbar ───────────────────────────── */
-.dark nav[class*="bg-white/70"] {
-  background-color: rgba(15, 23, 42, 0.85) !important;
-  border-color: rgba(139, 92, 246, 0.25) !important;
-}
-
-/* ── Sidebar (Navbar.jsx) ─────────────────────────────────────────────────── */
+/* ── Animated sidebar (Navbar.jsx) ───────────────────────────────────────── */
 .dark aside[class*="bg-white/75"] {
-  background-color: rgba(15, 23, 42, 0.95) !important;
-  border-color: rgba(139, 92, 246, 0.2) !important;
+  background-color: rgba(10,10,10,0.97) !important;
+  border-color: rgba(255,255,255,0.07) !important;
 }
 
 /* ── Dropdown menus ───────────────────────────────────────────────────────── */
-.dark [class*="bg-white/80"] {
-  background-color: rgba(15, 23, 42, 0.95) !important;
-}
-.dark .bg-white.rounded-2xl {
-  background-color: #1e1b4b !important;
+.dark [class*="bg-white/80"],
+.dark [class*="bg-white/90"] {
+  background-color: rgba(17, 17, 17, 0.98) !important;
 }
 
-/* ── Landing page stat cards, floating cards ─────────────────────────────── */
+/* ── Landing page floating stat cards ────────────────────────────────────── */
 .dark [class*="bg-white/5"] {
-  background-color: rgba(139, 92, 246, 0.08) !important;
-  border-color: rgba(139, 92, 246, 0.2) !important;
+  background-color: rgba(255,255,255,0.04) !important;
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
-/* ── Tips box (blue-50 border-blue-200) ──────────────────────────────────── */
-.dark .border-blue-200 { border-color: rgba(59, 130, 246, 0.3) !important; }
-.dark .border-purple-200 { border-color: rgba(139, 92, 246, 0.3) !important; }
-.dark .border-purple-300 { border-color: rgba(139, 92, 246, 0.4) !important; }
-.dark .border-red-200  { border-color: rgba(239, 68, 68, 0.3) !important; }
-.dark .border-green-200{ border-color: rgba(16, 185, 129, 0.3) !important; }
+/* ── Danger / success alerts ─────────────────────────────────────────────── */
+.dark [class*="bg-red-50/"]   { background-color: rgba(127,29,29,0.2) !important; }
+.dark [class*="bg-green-50/"] { background-color: rgba(6,78,59,0.2) !important; }
 
-/* ── Danger zone in Settings ─────────────────────────────────────────────── */
-.dark [class*="bg-red-50/"] {
-  background-color: rgba(127, 29, 29, 0.25) !important;
-}
-.dark .border-red-300 { border-color: rgba(239, 68, 68, 0.4) !important; }
+/* ── bg-white/60 category tabs ───────────────────────────────────────────── */
+.dark [class*="bg-white/60"] { background-color: rgba(20,20,20,0.7) !important; }
 
-/* ── Green success alert ─────────────────────────────────────────────────── */
-.dark [class*="bg-green-50/"] {
-  background-color: rgba(6, 78, 59, 0.3) !important;
-}
+/* ── Admin table ─────────────────────────────────────────────────────────── */
+.dark table  { background-color: #111111 !important; }
+.dark th     { background-color: #0a0a0a !important; color: #e2e8f0 !important; border-color: rgba(255,255,255,0.07) !important; }
+.dark td     { border-color: rgba(255,255,255,0.06) !important; color: #e2e8f0 !important; }
+.dark tr:hover td { background-color: rgba(255,255,255,0.03) !important; }
 
-/* ── Password strength / warning text ────────────────────────────────────── */
-.dark .text-red-500   { color: #f87171 !important; }
-.dark .text-red-600   { color: #ef4444 !important; }
-.dark .text-green-500 { color: #4ade80 !important; }
-.dark .text-green-600 { color: #22c55e !important; }
-.dark .text-green-700 { color: #86efac !important; }
-.dark .text-orange-500{ color: #fb923c !important; }
-.dark .text-blue-500  { color: #60a5fa !important; }
-.dark .text-blue-600  { color: #3b82f6 !important; }
-.dark .text-purple-600{ color: #a78bfa !important; }
-.dark .text-purple-700{ color: #c4b5fd !important; }
-.dark .text-red-500   { color: #f87171 !important; }
-
-/* ── Gray text used in cards/sections ────────────────────────────────────── */
-.dark .text-gray-800 { color: #e2e8f0 !important; }
-.dark .text-gray-700 { color: #cbd5e1 !important; }
-.dark .text-gray-600 { color: #94a3b8 !important; }
-.dark .text-gray-500 { color: #64748b !important; }
-.dark .text-gray-400 { color: #475569 !important; }
-
-/* ── Category filter tabs (horizontal pill row) ──────────────────────────── */
-.dark [class*="bg-white/60"] {
-  background-color: rgba(30, 27, 75, 0.6) !important;
+/* ── HomePage search input (has its own bg-white/80) ─────────────────────── */
+.dark input[class*="bg-white"] {
+  background-color: #1a1a1a !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #f1f5f9 !important;
 }
 
-/* ── Admin dashboard table rows ──────────────────────────────────────────── */
-.dark table { background-color: #1e1b4b !important; }
-.dark th    { background-color: #16133a !important; color: #c4b5fd !important; border-color: #312e81 !important; }
-.dark td    { border-color: #312e81 !important; color: #cbd5e1 !important; }
-.dark tr:hover td { background-color: rgba(139, 92, 246, 0.08) !important; }
+/* ── bg-white/80 backdrop cards ──────────────────────────────────────────── */
+.dark [class*="bg-white/80"] {
+  background-color: rgba(17,17,17,0.95) !important;
+}
 
-/* ── The gradient hero banner strip ──────────────────────────────────────── */
-/* (These stay the same in dark — purple gradient is fine on dark bg) */
+/* ── category card hover (border-gray-100) ───────────────────────────────── */
+.dark .border-gray-100 { border-color: rgba(255,255,255,0.06) !important; }
+
+/* ── User dropdown menu — solid bg to avoid stacking context blur issues ──── */
+.dark [style*="background: white"] {
+  background: #1a1a1a !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
