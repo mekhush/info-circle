@@ -127,7 +127,7 @@ const MyPostsPage = () => {
                   {/* Footer */}
                   <div className="flex items-center gap-4 pt-3 border-t border-white/40">
                     <span className="text-xs text-gray-400 flex items-center gap-1">
-                      💬 {post.comment?.length || 0} comment{(post.comment?.length || 0) !== 1 ? 's' : ''}
+                      💬 {post.comments?.length || 0} thought{(post.comments?.length || 0) !== 1 ? 's' : ''}
                     </span>
                     {post.postImage && (
                       <span className="text-xs text-blue-500">📷 Has image</span>
