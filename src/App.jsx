@@ -22,6 +22,13 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
+// Redirects logged-in users away from public-only pages (landing, login, signup)
+const PublicOnlyRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <Spinner />;
+  return isAuthenticated ? <Navigate to="/home" replace /> : children;
+};
+
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
   if (loading) return <Spinner />;
@@ -41,9 +48,9 @@ function AppContent() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/"            element={<LandingPage />} />
-        <Route path="/login"       element={<LoginPage />} />
-        <Route path="/signup"      element={<SignupPage />} />
+        <Route path="/"            element={<PublicOnlyRoute><LandingPage /></PublicOnlyRoute>} />
+        <Route path="/login"       element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+        <Route path="/signup"      element={<PublicOnlyRoute><SignupPage /></PublicOnlyRoute>} />
         <Route path="/home"        element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/profile"     element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/profile/edit" element={<ProtectedRoute><ProfileEditPage /></ProtectedRoute>} />
