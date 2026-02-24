@@ -23,6 +23,13 @@ const avatarGradient = (id) => GRADIENTS[(id || 0) % GRADIENTS.length];
 const getInitials    = (name = '') =>
   name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?';
 
+// If old users have email stored as userName, show only the part before '@'
+const displayName = (userName) => {
+  if (!userName) return 'Unknown';
+  if (userName.includes('@')) return userName.split('@')[0];
+  return userName;
+};
+
 const NAV_ITEMS = [
   { icon: '🏠', label: 'Home Feed',     href: '/home'        },
   { icon: '🌐', label: 'Explore Posts', href: '/all-posts'   },
@@ -143,7 +150,7 @@ const Navbar = () => {
         {expanded && (
           <div className="min-w-0 flex-1 overflow-hidden">
             <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate leading-tight">
-              {user?.userName}
+              {displayName(user?.userName)}
             </p>
             <p className="text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">
               {user?.bio || user?.city || 'InfoCircle Member'}

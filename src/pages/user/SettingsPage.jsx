@@ -3,6 +3,13 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// If old users have email stored as userName, show only the part before '@'
+const displayName = (userName) => {
+  if (!userName) return 'Unknown';
+  if (userName.includes('@')) return userName.split('@')[0];
+  return userName;
+};
 import { useAuth } from '../../context/AuthContext';
 
 const SettingsPage = () => {
@@ -47,7 +54,7 @@ const SettingsPage = () => {
                 {user?.userName?.charAt(0).toUpperCase()}
               </div>
               <div>
-                <p className="font-semibold text-gray-800">{user?.userName}</p>
+                <p className="font-semibold text-gray-800">{displayName(user?.userName)}</p>
                 <p className="text-sm text-gray-500">{user?.email}</p>
               </div>
               <button onClick={() => navigate('/profile/edit')}
