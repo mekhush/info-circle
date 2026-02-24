@@ -153,6 +153,7 @@ const PostComposer = ({ user, categories, onPostCreated }) => {
             value={content} onChange={e => setContent(e.target.value)}
             placeholder="Share your knowledge, ask a detailed question, or start a discussion…"
             rows={4}
+            maxLength={20000}
             className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-800 text-sm resize-none transition-all"
           />
           {mediaPreview && (
@@ -457,17 +458,33 @@ const HomePage = () => {
 
   useEffect(() => {
     setFeedLoading(true);
-    const endpoint = activeCat
-      ? `/post/category/${activeCat}/posts`
-      : '/post/allPosts';
+    
+    const fetchPosts = async () => {
+      try {
+        let data;
+        if (activeCat) {
+          // Fetch posts for specific category
+          const res = await api.get(`/post/category/${activeCat}/posts`);
+          data = res.data;
+        } else {
+          // Fetch all posts with pagination
+          const res = await api.get('/post/allPosts', {
+            params: { pageNumber: 0, pageSize: 500, sortBy: 'createdAt', sortDir: 'desc' }
+          });
+          data = res.data;
+        }
+        // Handle both array response (category posts) and paginated response (all posts)
+        const posts = Array.isArray(data) ? data : (data.content || []);
+        setPosts(posts);
+      } catch (err) {
+        console.error('[Feed] Error fetching posts:', err?.response?.status, err?.response?.data || err?.message);
+        setPosts([]);
+      } finally {
+        setFeedLoading(false);
+      }
+    };
 
-    api.get(endpoint, activeCat ? {} : { params: { pageNumber: 0, pageSize: 500, sortBy: 'createdAt', sortDir: 'desc' } })
-      .then(res => {
-        const data = res.data;
-        setPosts(Array.isArray(data) ? data : (data.content || []));
-      })
-      .catch((err) => { console.error("[Feed] FAILED:", err?.response?.status, err?.response?.data || err?.message); setPosts([]); })
-      .finally(() => setFeedLoading(false));
+    fetchPosts();
   }, [activeCat]);
 
   useEffect(() => {
@@ -491,7 +508,15 @@ const HomePage = () => {
   }, []);
 
   const handleLogout = () => { logout(); navigate('/login'); };
-  const handlePostCreated = (newPost) => setPosts(prev => [newPost, ...prev]);
+  const handlePostCreated = (newPost) => {
+    // Only add to feed if no category filter OR post belongs to active category
+    if (!activeCat || newPost?.category?.categoryId === activeCat) {
+      setPosts(prev => [newPost, ...prev]);
+    } else {
+      // Created in different category - reset to all to show it
+      setActiveCat(null);
+    }
+  };
   const displayedPosts = searchResults !== null ? searchResults : posts;
   const userPostCount = posts.filter(p => p.user?.userId === user?.userId).length;
 
@@ -502,9 +527,11 @@ const HomePage = () => {
       <div className="fixed top-0 left-0 right-0 flex justify-center pt-5 z-50">
         <nav className="flex items-center justify-between gap-4 w-[92%] max-w-7xl px-6 py-3 rounded-full bg-white/70 dark:bg-gray-900/80 backdrop-blur-xl border border-white/60 dark:border-gray-700/40 shadow-xl">
           <a href="/home" className="flex items-center gap-2 hover:scale-105 transition-transform duration-300 flex-shrink-0">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg">
-              <span className="text-white font-black text-sm">IC</span>
-            </div>
+            <img
+              src="/InfoCircle_logo_white.png"
+              alt="InfoCircle"
+              className="w-9 h-9 drop-shadow-md"
+            />
             <span className="hidden lg:block text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               InfoCircle
             </span>
@@ -5325,9 +5352,3 @@ export default HomePage;
 
 
 // V-F-1.02
-
-
-
-
-
-

@@ -203,11 +203,12 @@ const CreatePostPage = () => {
                 value={formData.content}
                 onChange={handleChange}
                 rows={7}
+                maxLength={20000}
                 className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all resize-none"
                 placeholder="Write your thoughts, ideas, or question in detail…"
                 required
               />
-              <p className="text-xs text-gray-400 mt-1 text-right">{formData.content.length} chars</p>
+              <p className={`text-xs mt-1 text-right ${formData.content.length > 18000 ? 'text-orange-500' : 'text-gray-400'}`}>{formData.content.length} / 20000 chars</p>
             </div>
 
             {/* ── Media Upload ─────────────────────────────────────────── */}

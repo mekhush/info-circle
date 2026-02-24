@@ -4,6 +4,14 @@ import { userService } from '../../services/userService';
 import { postService } from '../../services/postService';
 import { categoryService } from '../../services/categoryService';
 
+// If a user registered with their email as username (old data),
+// this extracts the part before '@' so it looks like a real name.
+const displayName = (userName) => {
+  if (!userName) return 'Unknown';
+  if (userName.includes('@')) return userName.split('@')[0];
+  return userName;
+};
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -72,8 +80,6 @@ const AdminDashboard = () => {
     e.preventDefault();
     setCatLoading(true);
     try {
-      // Build payload — omit categoryImage entirely if empty so the
-      // backend treats it as optional (avoids "field required" validation errors)
       const payload = {
         categoryTitle: newCat.categoryTitle,
         categoryTagLine: newCat.categoryTagLine,
@@ -186,7 +192,8 @@ const AdminDashboard = () => {
                       {users.map((u) => (
                         <tr key={u.userId} className="hover:bg-white/30 transition-colors">
                           <td className="px-4 py-3 text-sm text-gray-600">#{u.userId}</td>
-                          <td className="px-4 py-3 font-medium text-gray-800">{u.userName}</td>
+                          {/* displayName() strips @domain.com if username was saved as email */}
+                          <td className="px-4 py-3 font-medium text-gray-800">{displayName(u.userName)}</td>
                           <td className="px-4 py-3 text-sm text-gray-600">{u.email}</td>
                           <td className="px-4 py-3 text-sm text-gray-600">{u.mobileNumber}</td>
                           <td className="px-4 py-3">
@@ -224,7 +231,7 @@ const AdminDashboard = () => {
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-gray-800 truncate">{p.title}</h4>
                         <p className="text-sm text-gray-500">
-                          By {p.user?.userName} · {p.category?.categoryTitle} · {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}
+                          By {displayName(p.user?.userName)} · {p.category?.categoryTitle} · {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4 shrink-0">
@@ -262,7 +269,7 @@ const AdminDashboard = () => {
                       <div key={f.name}>
                         <label className="block text-sm font-medium text-gray-700 mb-2">{f.label}</label>
                         <input
-                          type="String"
+                          type="text"
                           name={f.name}
                           value={newCat[f.name] ?? ''}
                           onChange={(e) => setNewCat({ ...newCat, [e.target.name]: e.target.value || null })}
