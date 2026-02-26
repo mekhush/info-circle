@@ -6,11 +6,13 @@
 //  POST   /api/user/insertUser        createUser(userDto)   ← admin use
 //  PUT    /api/user/update/{id}       updateUser(id, data)  ← profile edit
 //  DELETE /api/user/delete/{id}       deleteUser(id)        ← admin use
+//  POST   /api/user/change-password   changePassword()      ← secure password change
 // ─────────────────────────────────────────────────────────────────────────────
 
 import api from './api';
 
 export const userService = {
+
   getAllUsers: async () => {
     const res = await api.get('/user/allUsers');
     return res.data; // List<UserDto>
@@ -28,8 +30,6 @@ export const userService = {
   },
 
   // Used by ProfileEditPage – PUT /api/user/update/{id}
-  // ⚠️  Note: the old code called /user/updateProfile/{id} which does NOT exist.
-  //     The correct endpoint is /user/update/{id}
   updateUser: async (userId, userData) => {
     const res = await api.put(`/user/update/${userId}`, userData);
     return res.data; // UserDto
@@ -39,4 +39,17 @@ export const userService = {
     const res = await api.delete(`/user/delete/${userId}`);
     return res.data; // ApiResponse
   },
+
+  // Secure password change (requires JWT)
+  changePassword: async (oldPassword, newPassword) => {
+    const res = await api.post(
+      `/user/change-password`,
+      null,
+      {
+        params: { oldPassword, newPassword }
+      }
+    );
+    return res.data; // "Password changed successfully."
+  },
+
 };

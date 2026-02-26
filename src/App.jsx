@@ -9,6 +9,8 @@ import LandingPage from './pages/user/LandingPage';
 import HomePage from './pages/user/HomePage';
 import LoginPage from './pages/user/LoginPage';
 import SignupPage from './pages/user/SignupPage';
+import ForgotPassPage from './pages/user/ForgotPassPage';
+import ResetPasswordPage from './pages/user/ResetPasswordPage';
 import ProfilePage from './pages/user/ProfilePage';
 import ProfileEditPage from './pages/user/ProfileEditPage';
 import CreatePostPage from './pages/user/CreatePostPage';
@@ -47,7 +49,11 @@ const Spinner = () => (
 function AdminThemeSync() {
   const { isAdmin } = useAuth();
   const { setAdminTheme } = useTheme();
-  useEffect(() => { setAdminTheme(isAdmin()); }, [isAdmin()]);
+
+  useEffect(() => {
+    setAdminTheme(isAdmin());
+  }, [isAdmin, setAdminTheme]);
+
   return null;
 }
 
@@ -59,6 +65,8 @@ function AppContent() {
       <Routes>
         <Route path="/"            element={<PublicOnlyRoute><LandingPage /></PublicOnlyRoute>} />
         <Route path="/login"       element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+        <Route path="/forgot-password"   element={<ForgotPassPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup"      element={<PublicOnlyRoute><SignupPage /></PublicOnlyRoute>} />
         <Route path="/home"        element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/profile"     element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
@@ -83,21 +91,6 @@ export default function App() {
     </ThemeProvider>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
